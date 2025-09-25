@@ -12,27 +12,33 @@ const BasicLayout = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const activeNavMap = {
-    "/orderlist": 1,
-    "/customer":1,
-    "/orderreceive":1,
-    "/partlist": 2,
-    "/buyercustomer": 2,
-    "/partorder":2,
-    "/currentdelivery":2,
-    "/itemlist":3,
-    "/plan": 3,
-    "/stock": 4,
-    "/sell":4,
+    "/order/orderlist": 1,
+    "/order/sellercustomer":1,
+    "/order/orderreceive":1,
+    "/buyer/partlist": 2,
+    "/buyer/buyercustomer": 2,
+    "/buyer/partorder":2,
+    "/buyer/buyerdelivery":2,
+    "/plan/itemlist":3,
+    "/plan/planlist": 3,
+    "/stock/stocklist": 4,
+    "/stock/sellamount":4,
   };
+  
+    const asideGroups = {
+        order: "/order",
+        buyer: "/buyer",
+        plan: "/plan",
+        stock: "/stock"
+    };
   const currentNavID = activeNavMap[location.pathname];
-    const orderAside = location.pathname === "/orderlist" || location.pathname === "/customer" || location.pathname === "/orderreceive";
+    const orderAside = location.pathname.startsWith(asideGroups.order);
 
-    const buyerAside = location.pathname === "/partlist" || location.pathname === "/buyercustomer"
-    || location.pathname === "/partorder" || location.pathname === "/currentdelivery";
+    const buyerAside = location.pathname.startsWith(asideGroups.buyer);
 
-    const planAside = location.pathname === "/plan" || location.pathname === "/itemlist";
+    const planAside = location.pathname.startsWith(asideGroups.plan);
 
-    const stockAside = location.pathname === "/stock" || location.pathname === "/sell";
+    const stockAside = location.pathname.startsWith(asideGroups.stock);
 
     function navigateAndReset(path){
         setAsideID(null);
@@ -46,32 +52,32 @@ const BasicLayout = () => {
       useEffect(() => {
         const pathToNavIdMap = {
             "/itemlist": 1,
-            "/customer":1,
+            "/sellercustomer":1,
             "/orderlist": 1,
             "/orderreceive": 1, // 'ORDER' 네비게이션 ID
             "/partlist": 2,
             "/buyercustomer": 2,
-            "/currentdelivery":2,
+            "/buyerdelivery":2,
             "/partorder":2,
             "/plan": 3,
             "/stock": 4,
-            "/sell":4,
+            "/sellamount":4,
         };
     
-        const pathToAsideIdMap = {
-            "/itemlist": 1,
-            "/orderlist": 1,
-            "/customer":2,
-            "/orderreceive": 3, // Aside의 ID를 3으로 설정
-            "/partlist": 1,
-            "/buyercustomer": 2,
-            "/partorder":3,
-            "/sell":2,
-        };
+        // const pathToAsideIdMap = {
+        //     "/itemlist": 1,
+        //     "/orderlist": 1,
+        //     "/sellercustomer":2,
+        //     "/orderreceive": 3, // Aside의 ID를 3으로 설정
+        //     "/partlist": 1,
+        //     "/buyercustomer": 2,
+        //     "/partorder":3,
+        //     "/sellamount":2,
+        // };
         const loginStatus = localStorage.getItem("isLoggedIn");
         setIsLoggedIn(loginStatus === "true"); // 로그인 상태 불러오기
         setNavID(pathToNavIdMap[location.pathname] || null);
-        setAsideID(pathToAsideIdMap[location.pathname] || null);
+        
     }, [location.pathname]);
 
     return(
@@ -80,9 +86,9 @@ const BasicLayout = () => {
 
                 <div className="logo">
                     <h1>
-                        <a href="#" onClick={() => navigateAndReset("/")}>
+                        <Link to = "/">
                             테스트로고
-                        </a>
+                        </Link>
                     </h1>
                 </div>
                 <nav>

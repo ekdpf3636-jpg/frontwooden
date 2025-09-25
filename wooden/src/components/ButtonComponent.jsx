@@ -1,12 +1,10 @@
-
-
-const ButtonComponent = ({setBool}) => {
+const ButtonComponent = ({onClick, text, type = "button"}) => {
   
   return(
     <div>
-      <button type="submit"
-      name={"submit"}
-      onClick={() => setBool(false)}>등록</button>
+      <button type={type} onClick={onClick}>
+        {text}
+      </button>
     </div>
   )
 }

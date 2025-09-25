@@ -4,7 +4,7 @@ const PlanListPage = () => {
   
   return(
     <div>
-      <h2>생산계획</h2>
+      <h2>생산리스트</h2>
     </div>
   );
 }

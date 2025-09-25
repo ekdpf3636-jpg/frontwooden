@@ -1,10 +1,10 @@
 
 
-const CloseBtnComponent = ({setBool}) => {
+const CloseBtnComponent = ({onClick}) => {
 
     return(
         <div className="clsBtnWrapper">
-            <button onClick={() => setBool(false)}>
+            <button onClick={onClick}>
                 X
             </button>
         </div>

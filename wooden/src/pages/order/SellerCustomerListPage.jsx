@@ -1,41 +1,38 @@
 import { useEffect, useState } from "react";
-import { getItems, createItem, updateItem, deleteItem } from "../../api/ItemAPI";
+import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from "../../api/CustomerAPI";
 import ModalComponent from "../../components/ModalComponent"
-import ItemForm from "../../form/ItemForm";
+import CustomerForm from "../../form/CustomerForm";
 import SearchInput from "../../components/SearchInput";
 
-const ItemListPage = () => {
-    const [items, setItems] = useState([]);
+const SellerCustomerListPage = () => {
+    const [customers, setCustomers] = useState([]);     // 전체 고객 리스트
     const [searchTerm, setSearchTerm] = useState("");   // 검색
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);     // 수정/삭제할 ID 
 
-
     // 입력할 폼 데이터
     const [formData, setFormData] = useState({
-        code:"",
-        name:"",
-        spec:"",
-        price:"",
+        company:"",
+        manager:"",
+        email:"",
+        phone:"",
+        address:"",
     });
 
-    // 상품 전체 조회
+    // 고객 전체 조회
     useEffect(() => {
-        fetchItems();
+        fetchCustomers();
     }, []);
-
-    const fetchItems = () => {
-        getItems().then((res) => {
-            setItems(res.data);
-        })
-        .catch((err) => {console.error("상품 조회 실패 : ", err);
-        });
+    const fetchCustomers = () => {
+        getCustomers()
+            .then((res) => setCustomers(res.data))
+            .catch((err) => console.error("고객 조회 실패 : " + err));
     };
 
     // 검색 필터 (판매 거래처명으로만 검색)
-    const filteredItems = items.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredCustomers = customers.filter((c) =>
+        c.company.toLowerCase().includes(searchTerm.toLowerCase()));
 
     // 입력값 변경 핸들러
     const handleChange = (e) => {
@@ -46,12 +43,12 @@ const ItemListPage = () => {
     // 등록 이벤트
     const handleCreate = () => {
         console.log("등록 요청 데이터 : ", formData); // 로그로 데이터가 들어오는지 확인용
-        createItem(formData)
+        createCustomer(formData)
             .then(() => {
                 alert("등록 성공");
                 setCreateModalOpen(false); // 모달 닫기
-                setFormData({code:"", name:"", spec:"", price:"0",}) // 입력 초기화
-                fetchItems();   // 등록 후 새로고침
+                setFormData({company: "", manager: "", email: "", phone: "", address: "",}) // 입력 초기화
+                fetchCustomers();   // 등록 후 새로고침
             })
             .catch((err) => {
                 if (err.response && err.response.data) {
@@ -68,11 +65,11 @@ const ItemListPage = () => {
 
     // 수정 이벤트
     const handleUpdate = () => {
-        updateItem(selectedId, formData)
+        updateCustomer(selectedId, formData)
             .then(() => {
                 alert("수정 성공");
                 setEditModalOpen(false);
-                fetchItems();
+                fetchCustomers();
             })
             .catch((err) => console.error("수정 실패 : " + err));
     };
@@ -81,11 +78,11 @@ const ItemListPage = () => {
     const handleDelete = () => {
         console.log("삭제 요청 확인");
         if (window.confirm("삭제하시겠습니까?")) {
-            deleteItem(selectedId)
+            deleteCustomer(selectedId)
                 .then(() => {
                     alert("삭제 완료");
                     setEditModalOpen(false);
-                    fetchItems();
+                    fetchCustomers();
                 })
                 .catch((err) => console.error("삭제 실패 : ", err));
         }
@@ -93,102 +90,106 @@ const ItemListPage = () => {
 
     // 등록 열기
     const openCreateModal = () => {
-        setFormData({code:"", name:"", spec:"", price:"",});
+        setFormData({company:"", manager:"", email:"", phone:"", address:""});
         setCreateModalOpen(true);
     };
 
     // 수정 모달 열기
-    const openEditModal = (item) => {
-        setSelectedId(item.id);
+    const openEditModal = (customer) => {
+        setSelectedId(customer.id);
         setFormData({
-            code:item.code,
-            name:item.name,
-            spec:item.spec,
-            price:item.price,
+            company:customer.company,
+            manager:customer.manager, 
+            email:customer.email, 
+            phone:customer.phone, 
+            address:customer.address
         });
         setEditModalOpen(true);
     }
 
     // 컴포넌트가 처음 렌더링될 때 API 호출
     useEffect(() => {
-        getItems().then((res) => {
-            setItems(res.data);
+        getCustomers().then((res) => {
+            setCustomers(res.data);
         })
         .catch((err) => {
-            console.error("아이템 조회 실패 : ", err);
+            console.error("고객 조회 실패 : ", err);
         });
     }, []);
 
     return(
-    <div style={{ padding: "20px" }} className="Add-wrapper">
-        <h2 style={{textAlign: "center"}}>상품 리스트</h2>
+        <div style={{padding:"20px"}} className="Add-wrapper">
+            <h2 style={{textAlign:"center"}}>판매 거래처 리스트</h2>
             {/* 공통 검색 컴포넌트 */}
-            <SearchInput value={searchTerm} onChange={setSearchTerm} placeholder="상품명 검색"/>
+            <SearchInput value={searchTerm} onChange={setSearchTerm} placeholder="판매처명 검색"/>
 
-            {/* Item 리스트 테이블 */}
+            {/* Customer 리스트 테이블 */}
             <table border="1" style={{width:"100%", textAlign:"center", borderCollapse:"collapse", marginTop:"20px"}}>
                 <thead style={{backgroundColor:"lightgreen"}}>
                     <tr>
-                        <th style={{padding:"10px"}}>상품번호</th>
-                        <th style={{padding:"10px"}}>상품코드</th>  
-                        <th style={{padding:"10px"}}>상품명</th> 
-                        <th style={{padding:"10px"}}>상품규격</th>
-                        <th style={{padding:"10px"}}>상품단가</th>    
+                        <th style={{padding:"10px"}}>No.</th>
+                        <th style={{padding:"10px"}}>판매처명</th>  
+                        <th style={{padding:"10px"}}>판매처 담당자</th> 
+                        <th style={{padding:"10px"}}>담당자 이메일</th>
+                        <th style={{padding:"10px"}}>번호</th>
+                        <th style={{padding:"10px"}}>주소</th>    
                     </tr>                    
                 </thead>
-
+                
                 <tbody>
-                    {filteredItems.length > 0 ? (
-                        filteredItems.map((item, index) => (
-                            <tr key={item.id} className="row">
+                    {filteredCustomers.length > 0 ? (
+                        filteredCustomers.map((c, index) => (
+                            <tr key={c.id} className="row">
                                 <td>{index + 1}</td>
-                                <td>{item.code}</td>
-                                <td
+                                <td 
                                     style={{cursor:"pointer", color:"blue", textDecoration:"underline"}}
-                                    onClick={() => openEditModal(item)} // 상품명 클릭시 수정/삭제 모달 열림
+                                    onClick={() => openEditModal(c)} // 판매처명 클릭시 수정/삭제 모달 열림
                                 >
-                                    {item.name}
+                                    {c.company}
                                 </td>
-                                <td>{item.spec}</td>
-                                <td>{Number(item.price).toLocaleString()} 원</td>
+                                <td>{c.manager}</td>
+                                <td>{c.email}</td>
+                                <td>{c.phone}</td>
+                                <td>{c.address}</td>
                             </tr>
                         ))
-                        ) : (                            
+                        ) : (
                             <tr>
-                                <td colSpan="5">등록된 상품이 없습니다</td>
+                                <td colSpan="6">등록된 판매 거래처가 없습니다</td>
                             </tr>
-
-                        )}
+                    )}
                 </tbody>
             </table> <br/>
             {/* 등록 버튼 */}
 
-            <button className="AddBtn" onClick={openCreateModal}>상품 등록</button>
+            <button className="AddBtn" onClick={openCreateModal}>거래처 등록</button>
 
             {/* 등록 모달 */}
             <ModalComponent 
                 isOpen={isCreateModalOpen} 
                 onClose={() => setCreateModalOpen(false)}
-                title="상품 등록"
+                title="판매 거래처 등록"
                 onConfirm={handleCreate}>
-                    <ItemForm formData={formData} onChange={handleChange} />
+                    <CustomerForm formData={formData} onChange={handleChange} />
             </ModalComponent>
 
             {/* 수정/삭제 모달 */}
             <ModalComponent
                 isOpen={isEditModalOpen}
                 onClose={() => setEditModalOpen(false)}
-                title="상품 수정/삭제"
+                title="판매 거래처 수정/삭제"
                 onConfirm={handleUpdate}>
-                    <ItemForm formData={formData} onChange={handleChange} />
+                    <CustomerForm formData={formData} onChange={handleChange} />
                     <button style={{marginTop:"10px", backgroundColor:"red", color:"white"}}
                             onClick={handleDelete}>
                         삭제    
                     </button>                    
             </ModalComponent>
-    </div>
-    );
-};
+        </div>
+        
+    )
 
-export default ItemListPage;
+    
+}
+export default SellerCustomerListPage;
 
