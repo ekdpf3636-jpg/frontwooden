@@ -1,38 +1,23 @@
-// Buyer라우터
-import { lazy, Suspense } from 'react';
-import { Navigate } from 'react-router-dom';
+import { lazy, Suspense } from "react";
+import { Navigate } from "react-router-dom";
+const L = <div>Loading...</div>;
 
+const BuyerListPage         = lazy(()=>import("../pages/buyer/BuyerListPage"));
+const BuyerAddModalRoute    = lazy(()=>import("../pages/buyer/BuyerAddModalRoute"));
+const BuyerIndexModalRoute  = lazy(()=>import("../pages/buyer/BuyerIndexModalRoute"));
+const BuyerModifyModalRoute = lazy(()=>import("../pages/buyer/BuyerModifyModalRoute"));
 
-
-const BuyerRouter = () => {
-    const PartList = lazy(() => import('../pages/buyer/PartListPage'));
-    const BuyerCustomer = lazy(() => import('../pages/buyer/BuyerListPage'))
-    const PartOrder = lazy(() => import("../pages/buyer/PartOrderListPage"))
-    const CurrentDeliveryPage = lazy(() => import("../pages/buyer/BuyerDeliveryPage"))
-
-    const Loading = <div>Loading...</div>
-
-    return[
-        {
-            path:"",
-            element:<Navigate replace to = "buyercustomer"/>
-        },
-        {
-            path:'partlist',
-            element: <Suspense fallback={Loading}><PartList/></Suspense>
-        },
-        {
-            path:'buyercustomer',
-            element: <Suspense fallback={Loading}><BuyerCustomer/></Suspense>
-        },
-        {
-            path: "partorder",
-            element: <Suspense fallback={Loading}><PartOrder/></Suspense>
-        },
-        {
-            path: "buyerdelivery",
-            element: <Suspense fallback={Loading}><CurrentDeliveryPage/></Suspense>
-        }
-    ]
+export default function BuyerRoutes() {
+  return [
+    { index: true, element: <Navigate replace to="buyercustomer" /> },
+    {
+      path: "buyercustomer",
+      element: <Suspense fallback={L}><BuyerListPage/></Suspense>, // 항상 리스트 렌더
+      children: [
+        { path: "add",          element: <Suspense fallback={L}><BuyerAddModalRoute/></Suspense> },
+        { path: ":id",          element: <Suspense fallback={L}><BuyerIndexModalRoute/></Suspense> },
+        { path: "modify/:id",   element: <Suspense fallback={L}><BuyerModifyModalRoute/></Suspense> },
+      ],
+    },
+  ];
 }
-export default BuyerRouter;

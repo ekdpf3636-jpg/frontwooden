@@ -54,7 +54,7 @@ li.selected{
   color: #000;
 }
 .aside-ul>li.selected::after,.header-ul>li.selected::after{
-  transform: scaleX(1);
+ transform: scaleX(1);
 }
 ul.header-ul{
   width: 70%;
@@ -115,9 +115,11 @@ ul.aside-ul{
 }
 
 /* List페이지 테이블 스타일링 세팅 */
+
 table{
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid;
 }
 tr{
   width: inherit;
@@ -145,6 +147,16 @@ thead,tbody tr{
   height: 50px;
   table-layout: fixed;  /* 고정 레이아웃 */
 }
+
+tbody td {
+  border: 1px solid;
+  text-indent: 30px;
+}
+tbody td:first-child{
+  text-align: center;
+  text-indent: 0;
+}
+
 
 
 
@@ -179,16 +191,5 @@ thead,tbody tr{
 }
 
 
-/* 등록 버튼*/
-.Add-wrapper{
-  box-sizing: border-box;
-  position: relative;
-  height: 100%;
-  top:0;left:0;
-}
-.AddBtn{
-  padding: 10px 20px;
-  font-size: 25px;
-  position: absolute;
-  bottom: 3%;left:3%;
-}
+
+
